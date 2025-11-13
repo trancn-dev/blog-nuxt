@@ -190,7 +190,7 @@
   const logout = () => {
     authLogout();
     showUserMenu.value = false;
-    router.push('/');
+    // Không chuyển trang, chỉ xóa thông tin đăng nhập
   };
 </script>
 

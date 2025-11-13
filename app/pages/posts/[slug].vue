@@ -206,7 +206,11 @@
           <v-card class="mt-6" elevation="1" v-else>
             <v-card-text class="text-center py-8">
               <p class="mb-4">Đăng nhập để bình luận</p>
-              <v-btn to="/login" color="primary">Đăng nhập</v-btn>
+              <v-btn
+                :to="{ path: '/login', query: { redirect: route.fullPath } }"
+                color="primary"
+                >Đăng nhập</v-btn
+              >
             </v-card-text>
           </v-card>
 
@@ -268,8 +272,11 @@
   const loading = ref(true);
   const isLiked = ref(false);
   const isBookmarked = ref(false);
-  const isLoggedIn = ref(false);
   const commentText = ref('');
+
+  // Use auth composable
+  const { isAuthenticated } = useAuth();
+  const isLoggedIn = computed(() => isAuthenticated.value);
 
   onMounted(async () => {
     await loadPost();

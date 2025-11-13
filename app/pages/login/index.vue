@@ -108,6 +108,10 @@
   };
 
   // Đăng nhập thông thường (email/password)
+  // Lưu lại đường dẫn trước khi chuyển sang login
+  const route = useRoute();
+  const redirectPath = ref(route.query.redirect || '/');
+
   async function handleLogin() {
     try {
       const response: any = await $fetch(
@@ -126,8 +130,8 @@
       // Lưu token và user info vào store
       setAuth(response.user, response.token);
 
-      // Chuyển về trang chủ
-      router.push('/');
+      // Chuyển về trang trước đó
+      router.push(redirectPath.value);
     } catch (error) {
       console.error('Lỗi đăng nhập:', error);
       alert('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
@@ -163,8 +167,8 @@
       // Lưu token và user info vào store
       setAuth(response.user, response.token);
 
-      // Chuyển về trang chủ
-      router.push('/');
+      // Chuyển về trang trước đó
+      router.push(redirectPath.value);
     } catch (error: any) {
       console.error('Lỗi đăng nhập Google:', error);
       alert('Đăng nhập Google thất bại: ' + error.message);
