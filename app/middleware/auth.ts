@@ -1,16 +1,29 @@
 export default defineNuxtRouteMiddleware((to, from) => {
   // Skip on server side
-  if (import.meta.server) return
+  if (import.meta.server) return;
 
-  const token = localStorage.getItem('auth_token')
+  const { isAuthenticated, loadFromStorage } = useAuth();
 
-  // If no token and trying to access admin pages (except login)
-  if (!token && to.path.startsWith('/admin') && to.path !== '/admin/login') {
-    return navigateTo('/admin/login')
+  // Load từ localStorage
+  if (!isAuthenticated.value) {
+    loadFromStorage();
   }
 
-  // If has token and trying to access login page
-  if (token && to.path === '/admin/login') {
-    return navigateTo('/admin')
+  // Admin routes
+  const auth_token = localStorage.getItem('auth_token');
+  if (
+    !auth_token &&
+    to.path.startsWith('/admin') &&
+    to.path !== '/admin/login'
+  ) {
+    return navigateTo('/admin/login');
   }
-})
+  if (auth_token && to.path === '/admin/login') {
+    return navigateTo('/admin');
+  }
+
+  // End-user protected routes
+  if (!isAuthenticated.value && to.meta.requiresAuth) {
+    return navigateTo('/login');
+  }
+});

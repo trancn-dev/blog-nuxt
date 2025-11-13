@@ -1,7 +1,10 @@
-<template lang="">
-  <div></div>
+<template>
+  <div>
+    <h1>Welcome to Blog</h1>
+    <p>Trang chủ của blog</p>
+  </div>
 </template>
-<script>
-export default {};
+
+<script setup lang="ts">
+  // Home page
 </script>
-<style lang=""></style>

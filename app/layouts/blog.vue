@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-default">
+  <div class="layout-blog">
     <TheHeader />
     <div class="layout-container">
       <div class="container">
@@ -22,67 +22,67 @@
 </template>
 
 <script setup>
-import TheHeader from "../components/TheHeader.vue";
-import TheFooter from "../components/TheFooter.vue";
-import TableOfContents from "../components/TableOfContents.vue";
+  import TheHeader from '../components/TheHeader.vue';
+  import TheFooter from '../components/TheFooter.vue';
+  import TableOfContents from '../components/TableOfContents.vue';
 </script>
 
 <style scoped>
-.layout-default {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #f9fafb;
-}
-
-.layout-container {
-  flex: 1;
-  padding: 24px 0;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.layout-grid {
-  display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 32px;
-  align-items: start;
-}
-
-.main-content {
-  min-width: 0; /* Fix for grid overflow */
-}
-
-.sidebar-wrapper {
-  position: sticky;
-  top: 84px; /* Header height + spacing */
-}
-
-@media (max-width: 1024px) {
-  .layout-grid {
-    grid-template-columns: 1fr;
+  .layout-blog {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f9fafb;
   }
 
-  .sidebar-wrapper {
-    display: none;
-  }
-}
-
-@media (max-width: 768px) {
   .layout-container {
-    padding: 16px 0;
+    flex: 1;
+    padding: 24px 0;
   }
 
   .container {
-    padding: 0 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
   }
 
   .layout-grid {
-    gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 32px;
+    align-items: start;
   }
-}
+
+  .main-content {
+    min-width: 0; /* Fix for grid overflow */
+  }
+
+  .sidebar-wrapper {
+    position: sticky;
+    top: 84px; /* Header height + spacing */
+  }
+
+  @media (max-width: 1024px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar-wrapper {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .layout-container {
+      padding: 16px 0;
+    }
+
+    .container {
+      padding: 0 16px;
+    }
+
+    .layout-grid {
+      gap: 16px;
+    }
+  }
 </style>

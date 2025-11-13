@@ -1,0 +1,21 @@
+/* Vuetify Container Override */
+.v-container {
+  max-width: 1200px !important;
+}
+
+@media (min-width: 1920px) {
+  .v-container {
+    max-width: 1200px !important;
+  }
+}
+
+/* Chart container styles */
+.chart-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+html {
+  overflow-y: auto;
+}

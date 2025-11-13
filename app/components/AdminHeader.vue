@@ -1,49 +1,128 @@
 <template>
-  <header class="admin-header">
-    <div class="header-left">
-      <button @click="$emit('toggle-sidebar')" class="menu-btn">
-        <span>☰</span>
+  <header class="navbar bg-base-100 shadow-sm sticky top-0 z-50 px-4">
+    <div class="flex-none">
+      <button
+        @click="$emit('toggle-sidebar')"
+        class="btn btn-ghost btn-square lg:hidden"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          class="inline-block w-6 h-6 stroke-current"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          ></path>
+        </svg>
       </button>
+    </div>
 
-      <div class="breadcrumb">
-        <span class="breadcrumb-item">Admin</span>
-        <span v-if="currentPage" class="breadcrumb-separator">/</span>
-        <span v-if="currentPage" class="breadcrumb-item current">{{
-          currentPage
-        }}</span>
+    <div class="flex-1">
+      <div class="breadcrumbs text-sm">
+        <ul>
+          <li>Admin</li>
+          <li v-if="currentPage">{{ currentPage }}</li>
+        </ul>
       </div>
     </div>
 
-    <div class="header-right">
-      <button class="header-btn" @click="viewSite">
-        <span>🌐</span>
-        <span class="btn-text">View Site</span>
+    <div class="flex-none gap-2">
+      <button @click="viewSite" class="btn btn-ghost btn-sm gap-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          class="w-5 h-5 stroke-current"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        <span class="hidden md:inline">View Site</span>
       </button>
 
-      <div class="user-menu">
-        <button class="user-btn" @click="showUserMenu = !showUserMenu">
-          <div class="user-avatar">
-            {{ userInitial }}
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-sm gap-2">
+          <div class="avatar placeholder">
+            <div class="bg-primary text-primary-content rounded-full w-8">
+              <span class="text-sm">{{ userInitial }}</span>
+            </div>
           </div>
-          <span class="user-name">{{ userName }}</span>
-          <span class="dropdown-icon">▼</span>
-        </button>
-
-        <div v-if="showUserMenu" class="user-dropdown">
-          <NuxtLink to="/admin/profile" class="dropdown-item">
-            <span>👤</span>
-            <span>Profile</span>
-          </NuxtLink>
-          <NuxtLink to="/admin/settings" class="dropdown-item">
-            <span>⚙️</span>
-            <span>Settings</span>
-          </NuxtLink>
-          <hr class="dropdown-divider" />
-          <button @click="logout" class="dropdown-item">
-            <span>🚪</span>
-            <span>Logout</span>
-          </button>
+          <span class="hidden md:inline">{{ userName }}</span>
         </div>
+        <ul
+          tabindex="0"
+          class="dropdown-content z-[1] menu p-2 shadow-lg bg-base-100 rounded-box w-52 mt-3"
+        >
+          <li>
+            <NuxtLink to="/admin/profile">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="w-5 h-5 stroke-current"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
+              Profile
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink to="/admin/settings">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="w-5 h-5 stroke-current"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+              Settings
+            </NuxtLink>
+          </li>
+          <li class="menu-title"><span></span></li>
+          <li>
+            <button @click="logout">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                class="w-5 h-5 stroke-current"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                ></path>
+              </svg>
+              Logout
+            </button>
+          </li>
+        </ul>
       </div>
     </div>
   </header>
@@ -54,7 +133,6 @@ defineEmits(["toggle-sidebar"]);
 
 const route = useRoute();
 const router = useRouter();
-const showUserMenu = ref(false);
 
 const userName = ref("Admin User");
 const userInitial = computed(() => userName.value.charAt(0).toUpperCase());
@@ -75,184 +153,4 @@ const logout = async () => {
   // TODO: Implement logout logic
   await router.push("/admin/login");
 };
-
-// Close dropdown when clicking outside
-onMounted(() => {
-  document.addEventListener("click", (e) => {
-    if (!e.target.closest(".user-menu")) {
-      showUserMenu.value = false;
-    }
-  });
-});
 </script>
-
-<style scoped>
-.admin-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.menu-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  color: #374151;
-  display: none;
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-}
-
-.breadcrumb-item {
-  color: #6b7280;
-}
-
-.breadcrumb-item.current {
-  color: #1f2937;
-  font-weight: 600;
-}
-
-.breadcrumb-separator {
-  color: #d1d5db;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.header-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: #374151;
-  transition: all 0.2s;
-}
-
-.header-btn:hover {
-  background: #e5e7eb;
-}
-
-.user-menu {
-  position: relative;
-}
-
-.user-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 1rem;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.user-btn:hover {
-  background: #e5e7eb;
-}
-
-.user-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 0.875rem;
-}
-
-.user-name {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
-}
-
-.dropdown-icon {
-  font-size: 0.625rem;
-  color: #6b7280;
-}
-
-.user-dropdown {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  min-width: 200px;
-  overflow: hidden;
-  z-index: 100;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: #374151;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-
-.dropdown-item:hover {
-  background: #f3f4f6;
-}
-
-.dropdown-divider {
-  border: none;
-  border-top: 1px solid #e5e7eb;
-  margin: 0.25rem 0;
-}
-
-@media (max-width: 768px) {
-  .menu-btn {
-    display: block;
-  }
-
-  .btn-text {
-    display: none;
-  }
-
-  .user-name {
-    display: none;
-  }
-}
-</style>

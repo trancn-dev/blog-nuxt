@@ -1,17 +1,17 @@
-<!-- register page using Vuetify components -->
+<!-- login page using Vuetify components -->
 <template>
-  <v-container class="register-page">
+  <v-container class="login-page">
     <v-row justify="center" align="center">
-      <v-col cols="12" sm="8" md="6" lg="5" xl="4">
+      <v-col cols="8">
         <v-card elevation="8" class="pa-6">
           <v-card-title class="text-h5 text-center mb-4">
-            Đăng Kí Tài Khoản
+            Đăng nhập
           </v-card-title>
 
           <v-card-text>
-            <v-form @submit.prevent="handleRegister">
+            <v-form @submit.prevent="handleLogin">
               <v-text-field
-                v-model="username"
+                v-model="email"
                 label="Tên Đăng Nhập"
                 variant="outlined"
                 prepend-inner-icon="mdi-account"
@@ -20,23 +20,12 @@
               />
 
               <v-text-field
-                v-model="email"
-                label="Email"
-                type="email"
-                variant="outlined"
-                prepend-inner-icon="mdi-email"
-                :rules="[rules.required, rules.email]"
-                required
-                class="mt-3"
-              />
-
-              <v-text-field
                 v-model="password"
                 label="Mật Khẩu"
                 type="password"
                 variant="outlined"
                 prepend-inner-icon="mdi-lock"
-                :rules="[rules.required, rules.minLength]"
+                :rules="[rules.required]"
                 required
                 class="mt-3"
               />
@@ -48,14 +37,14 @@
                 block
                 class="mt-4"
               >
-                Đăng Kí
+                Đăng nhập
               </v-btn>
 
-              <!-- đăng kí bằng mạng xã hội -->
+              <!-- đăng nhập bằng mạng xã hội -->
               <v-divider class="my-4" />
 
               <div class="text-center mb-3">
-                <span class="text-body-2">Hoặc đăng kí bằng:</span>
+                <span class="text-body-2">Hoặc đăng nhập bằng:</span>
               </div>
 
               <v-btn
@@ -64,10 +53,10 @@
                 prepend-icon="mdi-google"
                 block
                 class="mb-2"
-                @click="handleGoogleRegister"
+                @click="handleGoogleLogin"
                 :loading="googleLoading"
               >
-                Đăng ký với Google
+                Đăng nhập với Google
               </v-btn>
 
               <v-btn
@@ -99,6 +88,7 @@
 </template>
 
 <script setup lang="ts">
+  // use layout blank for login page
   definePageMeta({
     layout: 'blank',
     middleware: 'guest',
@@ -106,7 +96,6 @@
 
   import { ref } from 'vue';
 
-  const username = ref('');
   const email = ref('');
   const password = ref('');
   const googleLoading = ref(false);
@@ -116,41 +105,37 @@
 
   const rules = {
     required: (value: string) => !!value || 'Trường này là bắt buộc',
-    email: (value: string) => /.+@.+\..+/.test(value) || 'Email không hợp lệ',
-    minLength: (value: string) =>
-      value.length >= 6 || 'Mật khẩu phải có ít nhất 6 ký tự',
   };
 
-  // Đăng ký thông thường
-  async function handleRegister() {
+  // Đăng nhập thông thường (email/password)
+  async function handleLogin() {
     try {
       const response: any = await $fetch(
-        `${config.public.apiBase}/auth/register`,
+        `${config.public.apiBase}/auth/login`,
         {
           method: 'POST',
           body: {
-            username: username.value,
             email: email.value,
             password: password.value,
           },
         }
       );
 
-      console.log('Đăng ký thành công:', response);
+      console.log('Đăng nhập thành công:', response);
 
       // Lưu token và user info vào store
       setAuth(response.user, response.token);
 
-      alert('Đăng ký thành công!');
+      // Chuyển về trang chủ
       router.push('/');
     } catch (error) {
-      console.error('Lỗi đăng ký:', error);
-      alert('Đăng ký thất bại. Vui lòng thử lại.');
+      console.error('Lỗi đăng nhập:', error);
+      alert('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
     }
   }
 
-  // Đăng ký bằng Google
-  async function handleGoogleRegister() {
+  // Đăng nhập bằng Google
+  async function handleGoogleLogin() {
     googleLoading.value = true;
     try {
       const { signInWithGoogle } = useFirebaseAuth();
@@ -159,7 +144,7 @@
       // Lấy ID token từ Firebase
       const idToken = await user.getIdToken();
 
-      // Gửi token lên backend để tạo tài khoản
+      // Gửi token lên backend để xác thực
       const response: any = await $fetch(
         `${config.public.apiBase}/auth/google`,
         {
@@ -173,23 +158,23 @@
         }
       );
 
-      console.log('Đăng ký Google thành công:', response);
+      console.log('Đăng nhập Google thành công:', response);
 
       // Lưu token và user info vào store
       setAuth(response.user, response.token);
 
-      alert('Đăng ký thành công!');
+      // Chuyển về trang chủ
       router.push('/');
     } catch (error: any) {
-      console.error('Lỗi đăng ký Google:', error);
-      alert('Đăng ký Google thất bại: ' + error.message);
+      console.error('Lỗi đăng nhập Google:', error);
+      alert('Đăng nhập Google thất bại: ' + error.message);
     } finally {
       googleLoading.value = false;
     }
   }
 </script>
 <style scoped>
-  .register-page {
+  .login-page {
     height: 100%;
     display: flex;
     align-items: center;
