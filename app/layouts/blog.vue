@@ -3,6 +3,11 @@
     <TheHeader />
     <div class="layout-container">
       <div class="container">
+        <!-- Post Title Section -->
+        <div class="post-title-section">
+          <slot name="title" />
+        </div>
+
         <div class="layout-grid">
           <!-- Main Content -->
           <main class="main-content">
@@ -44,6 +49,10 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+  }
+
+  .post-title-section {
+    margin-bottom: 32px;
   }
 
   .layout-grid {

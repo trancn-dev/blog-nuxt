@@ -30,8 +30,8 @@
 </template>
 
 <script setup>
-  // Sử dụng direct = true để gọi trực tiếp Laravel API
-  const { postsAPI } = useAPI(true);
+  // Gọi qua Nuxt server (không dùng direct)
+  const { postsAPI } = useAPI();
 
   const posts = ref([]);
   const loading = ref(true);
@@ -52,9 +52,9 @@
       });
 
       // Handle Laravel pagination response
-      if (response.data) {
+      if (response.Data) {
         // Transform API data to match component props
-        const transformedPosts = response.data.map((post) => ({
+        const transformedPosts = response.Data.map((post) => ({
           id: post.id,
           title: post.title,
           slug: post.slug,
@@ -65,7 +65,7 @@
             id: 1,
             name: 'Anonymous',
             username: 'anonymous',
-            avatar: 'https://via.placeholder.com/40',
+            avatar: '',
           },
           tags: post.tags || [],
           created_at: post.created_at || post.published_at,

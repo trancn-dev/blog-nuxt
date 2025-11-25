@@ -1,255 +1,323 @@
 <template>
-  <v-container class="post-detail-page">
-    <!-- Loading State -->
-    <v-row v-if="loading" justify="center" class="my-12">
-      <v-col cols="12" class="text-center">
-        <v-progress-circular indeterminate color="primary" size="64" />
-        <p class="mt-4 text-body-1">Đang tải bài viết...</p>
-      </v-col>
-    </v-row>
+  <NuxtLayout name="blog">
+    <!-- Post Title Slot -->
+    <template #title>
+      <div v-if="post && !loading" class="post-title-header">
+        <!-- Title -->
 
-    <!-- Post Content -->
-    <v-row v-else-if="post" justify="center">
-      <v-col cols="12">
-        <v-card elevation="0">
-          <v-card-text>
-            <!-- Post Header -->
-            <header class="post-header mb-6">
-              <!-- Author Info -->
-              <div class="d-flex align-center mb-4">
-                <NuxtLink :to="`/u/${post.author?.username}`">
-                  <v-avatar size="48" class="mr-3">
-                    <v-img
-                      :src="
-                        post.author?.avatar || 'https://via.placeholder.com/48'
-                      "
-                      :alt="post.author?.name"
-                    />
-                  </v-avatar>
-                </NuxtLink>
-                <div class="flex-grow-1">
-                  <NuxtLink
-                    :to="`/u/${post.author?.username}`"
-                    class="text-decoration-none"
-                  >
-                    <div class="text-subtitle-1 font-weight-medium">
-                      {{ post.author?.name }}
-                    </div>
+        <h1 class="text-h3 font-weight-bold mb-4">{{ post.title }}</h1>
+        <!-- Author Info -->
+        <div class="d-flex align-center mb-4">
+          <NuxtLink :to="`/u/${post.author?.username}`">
+          </NuxtLink>
+          <div class="flex-grow-1">
+            <NuxtLink
+              :to="`/u/${post.author?.username}`"
+              class="text-decoration-none"
+            >
+              <div class="text-subtitle-1 font-weight-medium">
+                {{ post.author?.name }}
+              </div>
+            </NuxtLink>
+            <div class="text-caption text-medium-emphasis">
+              @{{ post.author?.username }}
+            </div>
+          </div>
+          <v-btn variant="outlined" color="primary" size="small">
+            Theo dõi
+          </v-btn>
+        </div>
+
+        <!-- Post Meta -->
+        <div class="d-flex align-center flex-wrap mb-4">
+          <v-chip size="small" class="mr-2" prepend-icon="mdi-eye">
+            {{ post.views_count || 0 }}
+          </v-chip>
+          <v-chip size="small" class="mr-2" prepend-icon="mdi-heart">
+            {{ post.likes_count || 0 }}
+          </v-chip>
+          <v-chip size="small" class="mr-2" prepend-icon="mdi-comment">
+            {{ post.comments_count || 0 }}
+          </v-chip>
+          <v-spacer class="d-none d-sm-flex" />
+          <div class="text-caption text-medium-emphasis">
+            Đã đăng vào
+            {{ formatDate(post.published_at || post.created_at) }} -
+            {{ post.read_time || calculateReadTime(post.content) }} phút đọc
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div v-if="post.tags && post.tags.length">
+          <v-chip
+            v-for="tag in post.tags"
+            :key="tag.id"
+            :to="`/tags/${tag.slug}`"
+            size="small"
+            class="mr-2"
+            variant="outlined"
+          >
+            {{ tag.name }}
+          </v-chip>
+        </div>
+      </div>
+    </template>
+
+    <v-container class="post-detail-page">
+      <!-- Loading State -->
+      <v-row v-if="loading" justify="center" class="my-12">
+        <v-col cols="12" class="text-center">
+          <v-progress-circular indeterminate color="primary" size="64" />
+          <p class="mt-4 text-body-1">Đang tải bài viết...</p>
+        </v-col>
+      </v-row>
+
+      <!-- Post Content -->
+      <v-row v-else-if="post" justify="center">
+        <v-col cols="12">
+          <v-card elevation="0">
+            <v-card-text>
+              <!-- Post Header now in layout title slot above -->
+              <header class="post-header mb-6" style="display: none">
+                <!-- Author Info -->
+                <div class="d-flex align-center mb-4">
+                  <NuxtLink :to="`/u/${post.author?.username}`">
+                    <v-avatar size="48" class="mr-3">
+                      <v-img
+                        :src="
+                          post.author?.avatar ||
+                          'https://via.placeholder.com/48'
+                        "
+                        :alt="post.author?.name"
+                      />
+                    </v-avatar>
                   </NuxtLink>
+                  <div class="flex-grow-1">
+                    <NuxtLink
+                      :to="`/u/${post.author?.username}`"
+                      class="text-decoration-none"
+                    >
+                      <div class="text-subtitle-1 font-weight-medium">
+                        {{ post.author?.name }}
+                      </div>
+                    </NuxtLink>
+                    <div class="text-caption text-medium-emphasis">
+                      @{{ post.author?.username }}
+                    </div>
+                  </div>
+                  <v-btn variant="outlined" color="primary" size="small">
+                    Theo dõi
+                  </v-btn>
+                </div>
+
+                <!-- Post Meta -->
+                <div class="d-flex align-center flex-wrap mb-4">
+                  <v-chip size="small" class="mr-2" prepend-icon="mdi-eye">
+                    {{ post.views_count || 0 }}
+                  </v-chip>
+                  <v-chip size="small" class="mr-2" prepend-icon="mdi-heart">
+                    {{ post.likes_count || 0 }}
+                  </v-chip>
+                  <v-chip size="small" class="mr-2" prepend-icon="mdi-comment">
+                    {{ post.comments_count || 0 }}
+                  </v-chip>
+                  <v-spacer class="d-none d-sm-flex" />
                   <div class="text-caption text-medium-emphasis">
-                    @{{ post.author?.username }}
+                    Đã đăng vào
+                    {{ formatDate(post.published_at || post.created_at) }} -
+                    {{ post.read_time || calculateReadTime(post.content) }} phút
+                    đọc
                   </div>
                 </div>
-                <v-btn variant="outlined" color="primary" size="small">
-                  Theo dõi
-                </v-btn>
-              </div>
 
-              <!-- Post Meta -->
-              <div class="d-flex align-center flex-wrap mb-4">
-                <v-chip size="small" class="mr-2" prepend-icon="mdi-eye">
-                  {{ post.views_count || 0 }}
-                </v-chip>
-                <v-chip size="small" class="mr-2" prepend-icon="mdi-heart">
-                  {{ post.likes_count || 0 }}
-                </v-chip>
-                <v-chip size="small" class="mr-2" prepend-icon="mdi-comment">
-                  {{ post.comments_count || 0 }}
-                </v-chip>
-                <v-spacer class="d-none d-sm-flex" />
-                <div class="text-caption text-medium-emphasis">
-                  Đã đăng vào
-                  {{ formatDate(post.published_at || post.created_at) }} -
-                  {{ post.read_time || calculateReadTime(post.content) }} phút
-                  đọc
+                <!-- Title -->
+                <h1 class="text-h3 font-weight-bold mb-4">{{ post.title }}</h1>
+
+                <!-- Tags -->
+                <div v-if="post.tags && post.tags.length" class="mb-4">
+                  <v-chip
+                    v-for="tag in post.tags"
+                    :key="tag.id"
+                    :to="`/tags/${tag.slug}`"
+                    size="small"
+                    class="mr-2"
+                    variant="outlined"
+                  >
+                    {{ tag.name }}
+                  </v-chip>
                 </div>
-              </div>
+              </header>
 
-              <!-- Title -->
-              <h1 class="text-h3 font-weight-bold mb-4">{{ post.title }}</h1>
+              <!-- Post Content Body -->
+              <div class="post-body" v-html="post.content"></div>
 
-              <!-- Tags -->
-              <div v-if="post.tags && post.tags.length" class="mb-4">
-                <v-chip
-                  v-for="tag in post.tags"
-                  :key="tag.id"
-                  :to="`/tags/${tag.slug}`"
+              <!-- Post Footer Actions -->
+              <v-divider class="my-6" />
+              <div class="d-flex align-center flex-wrap ga-2">
+                <v-btn
+                  :color="isLiked ? 'error' : 'default'"
+                  :variant="isLiked ? 'flat' : 'outlined'"
+                  @click="toggleLike"
+                  prepend-icon="mdi-heart"
                   size="small"
-                  class="mr-2"
+                >
+                  {{ post.likes_count || 0 }}
+                </v-btn>
+
+                <v-btn
                   variant="outlined"
+                  @click="scrollToComments"
+                  prepend-icon="mdi-comment"
+                  size="small"
                 >
-                  {{ tag.name }}
-                </v-chip>
+                  {{ post.comments_count || 0 }}
+                </v-btn>
+
+                <v-btn
+                  variant="outlined"
+                  @click="sharePost"
+                  prepend-icon="mdi-share-variant"
+                  size="small"
+                >
+                  Chia sẻ
+                </v-btn>
+
+                <v-btn
+                  :color="isBookmarked ? 'primary' : 'default'"
+                  :variant="isBookmarked ? 'flat' : 'outlined'"
+                  @click="toggleBookmark"
+                  icon="mdi-bookmark"
+                  size="small"
+                />
               </div>
-            </header>
+            </v-card-text>
+          </v-card>
 
-            <!-- Post Content Body -->
-            <div class="post-body" v-html="post.content"></div>
-
-            <!-- Post Footer Actions -->
-            <v-divider class="my-6" />
-            <div class="d-flex align-center flex-wrap ga-2">
-              <v-btn
-                :color="isLiked ? 'error' : 'default'"
-                :variant="isLiked ? 'flat' : 'outlined'"
-                @click="toggleLike"
-                prepend-icon="mdi-heart"
-                size="small"
+          <!-- Related Posts -->
+          <section class="related-posts" v-if="relatedPosts.length">
+            <h3 class="section-title">Bài viết liên quan</h3>
+            <div class="related-grid">
+              <NuxtLink
+                v-for="related in relatedPosts"
+                :key="related.id"
+                :to="`/p/${related.slug}`"
+                class="related-card"
               >
-                {{ post.likes_count || 0 }}
-              </v-btn>
-
-              <v-btn
-                variant="outlined"
-                @click="scrollToComments"
-                prepend-icon="mdi-comment"
-                size="small"
-              >
-                {{ post.comments_count || 0 }}
-              </v-btn>
-
-              <v-btn
-                variant="outlined"
-                @click="sharePost"
-                prepend-icon="mdi-share-variant"
-                size="small"
-              >
-                Chia sẻ
-              </v-btn>
-
-              <v-btn
-                :color="isBookmarked ? 'primary' : 'default'"
-                :variant="isBookmarked ? 'flat' : 'outlined'"
-                @click="toggleBookmark"
-                icon="mdi-bookmark"
-                size="small"
-              />
+                <h4 class="related-title">{{ related.title }}</h4>
+                <div class="related-meta">
+                  <span class="related-author">{{ related.author?.name }}</span>
+                  <span class="related-stats"
+                    >{{ related.read_time || 3 }} phút đọc</span
+                  >
+                  <span class="related-stats">{{
+                    formatNumber(related.views_count)
+                  }}</span>
+                  <span class="related-stats">{{ related.likes_count }}</span>
+                  <span class="related-stats">{{
+                    related.comments_count
+                  }}</span>
+                </div>
+              </NuxtLink>
             </div>
-          </v-card-text>
-        </v-card>
+          </section>
 
-        <!-- Related Posts -->
-        <section class="related-posts" v-if="relatedPosts.length">
-          <h3 class="section-title">Bài viết liên quan</h3>
-          <div class="related-grid">
-            <NuxtLink
-              v-for="related in relatedPosts"
-              :key="related.id"
-              :to="`/p/${related.slug}`"
-              class="related-card"
-            >
-              <h4 class="related-title">{{ related.title }}</h4>
-              <div class="related-meta">
-                <span class="related-author">{{ related.author?.name }}</span>
-                <span class="related-stats"
-                  >{{ related.read_time || 3 }} phút đọc</span
+          <!-- Author's Other Posts -->
+          <section class="author-posts" v-if="authorPosts.length">
+            <h3 class="section-title">
+              Bài viết khác từ {{ post.author?.name }}
+            </h3>
+            <div class="author-posts-list">
+              <NuxtLink
+                v-for="authorPost in authorPosts"
+                :key="authorPost.id"
+                :to="`/p/${authorPost.slug}`"
+                class="author-post-card"
+              >
+                <h4 class="author-post-title">{{ authorPost.title }}</h4>
+                <div class="author-post-meta">
+                  <span>{{ authorPost.read_time || 3 }} phút đọc</span>
+                  <span>{{ authorPost.views_count || 0 }}</span>
+                  <span>{{ authorPost.likes_count || 0 }}</span>
+                  <span>{{ authorPost.comments_count || 0 }}</span>
+                </div>
+              </NuxtLink>
+            </div>
+          </section>
+
+          <!-- Comments Section -->
+          <section class="comments-section" id="comments">
+            <h3 class="section-title">Bình luận</h3>
+
+            <!-- Comment Form -->
+            <v-card class="mt-6" elevation="1" v-if="isLoggedIn">
+              <v-card-title>Bình luận</v-card-title>
+              <v-card-text>
+                <v-textarea
+                  v-model="commentText"
+                  placeholder="Viết bình luận..."
+                  variant="outlined"
+                  rows="3"
+                  hide-details
+                />
+                <v-btn
+                  color="primary"
+                  class="mt-3"
+                  @click="submitComment"
+                  :disabled="!commentText.trim()"
                 >
-                <span class="related-stats">{{
-                  formatNumber(related.views_count)
-                }}</span>
-                <span class="related-stats">{{ related.likes_count }}</span>
-                <span class="related-stats">{{ related.comments_count }}</span>
-              </div>
-            </NuxtLink>
-          </div>
-        </section>
+                  Gửi bình luận
+                </v-btn>
+              </v-card-text>
+            </v-card>
 
-        <!-- Author's Other Posts -->
-        <section class="author-posts" v-if="authorPosts.length">
-          <h3 class="section-title">
-            Bài viết khác từ {{ post.author?.name }}
-          </h3>
-          <div class="author-posts-list">
-            <NuxtLink
-              v-for="authorPost in authorPosts"
-              :key="authorPost.id"
-              :to="`/p/${authorPost.slug}`"
-              class="author-post-card"
-            >
-              <h4 class="author-post-title">{{ authorPost.title }}</h4>
-              <div class="author-post-meta">
-                <span>{{ authorPost.read_time || 3 }} phút đọc</span>
-                <span>{{ authorPost.views_count || 0 }}</span>
-                <span>{{ authorPost.likes_count || 0 }}</span>
-                <span>{{ authorPost.comments_count || 0 }}</span>
-              </div>
-            </NuxtLink>
-          </div>
-        </section>
+            <v-card class="mt-6" elevation="1" v-else>
+              <v-card-text class="text-center py-8">
+                <p class="mb-4">Đăng nhập để bình luận</p>
+                <v-btn
+                  :to="{ path: '/login', query: { redirect: route.fullPath } }"
+                  color="primary"
+                  >Đăng nhập</v-btn
+                >
+              </v-card-text>
+            </v-card>
 
-        <!-- Comments Section -->
-        <section class="comments-section" id="comments">
-          <h3 class="section-title">Bình luận</h3>
+            <!-- Comments List -->
+            <v-card class="mt-6" elevation="1">
+              <v-card-title>Bình luận ({{ comments.length }})</v-card-title>
+              <v-card-text>
+                <div
+                  v-if="comments.length === 0"
+                  class="text-center text-medium-emphasis py-8"
+                >
+                  Chưa có bình luận nào
+                </div>
+                <div v-else>
+                  <!-- TODO: Render comments -->
+                </div>
+              </v-card-text>
+            </v-card>
+          </section>
+        </v-col>
+      </v-row>
 
-          <!-- Comment Form -->
-          <v-card class="mt-6" elevation="1" v-if="isLoggedIn">
-            <v-card-title>Bình luận</v-card-title>
-            <v-card-text>
-              <v-textarea
-                v-model="commentText"
-                placeholder="Viết bình luận..."
-                variant="outlined"
-                rows="3"
-                hide-details
-              />
-              <v-btn
-                color="primary"
-                class="mt-3"
-                @click="submitComment"
-                :disabled="!commentText.trim()"
-              >
-                Gửi bình luận
-              </v-btn>
-            </v-card-text>
-          </v-card>
-
-          <v-card class="mt-6" elevation="1" v-else>
-            <v-card-text class="text-center py-8">
-              <p class="mb-4">Đăng nhập để bình luận</p>
-              <v-btn
-                :to="{ path: '/login', query: { redirect: route.fullPath } }"
-                color="primary"
-                >Đăng nhập</v-btn
-              >
-            </v-card-text>
-          </v-card>
-
-          <!-- Comments List -->
-          <v-card class="mt-6" elevation="1">
-            <v-card-title>Bình luận ({{ comments.length }})</v-card-title>
-            <v-card-text>
-              <div
-                v-if="comments.length === 0"
-                class="text-center text-medium-emphasis py-8"
-              >
-                Chưa có bình luận nào
-              </div>
-              <div v-else>
-                <!-- TODO: Render comments -->
-              </div>
-            </v-card-text>
-          </v-card>
-        </section>
-      </v-col>
-    </v-row>
-
-    <!-- Error State -->
-    <v-row v-else justify="center">
-      <v-col cols="12" class="text-center py-12">
-        <v-icon size="64" color="error">mdi-alert-circle</v-icon>
-        <h3 class="text-h5 mt-4">Không tìm thấy bài viết</h3>
-        <p class="text-body-1 text-medium-emphasis mt-2">
-          Bài viết bạn đang tìm không tồn tại hoặc đã bị xóa
-        </p>
-        <v-btn to="/" color="primary" class="mt-4">Về trang chủ</v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
+      <!-- Error State -->
+      <v-row v-else justify="center">
+        <v-col cols="12" class="text-center py-12">
+          <v-icon size="64" color="error">mdi-alert-circle</v-icon>
+          <h3 class="text-h5 mt-4">Không tìm thấy bài viết</h3>
+          <p class="text-body-1 text-medium-emphasis mt-2">
+            Bài viết bạn đang tìm không tồn tại hoặc đã bị xóa
+          </p>
+          <v-btn to="/" color="primary" class="mt-4">Về trang chủ</v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+  </NuxtLayout>
 </template>
 
 <script setup>
   definePageMeta({
-    layout: 'blog',
+    layout: false,
   });
   const route = useRoute();
   // Sử dụng direct = true để gọi trực tiếp Laravel API
@@ -290,7 +358,7 @@
       const response = await postsAPI.getBySlug(slug);
 
       post.value = {
-        ...response,
+        ...response.Data,
         views_count: response.view_count,
         created_at: response.created_at || response.published_at,
       };

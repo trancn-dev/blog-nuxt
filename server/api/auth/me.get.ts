@@ -1,14 +1,14 @@
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
   const config = useRuntimeConfig();
+  const headers = getHeaders(event);
 
   try {
     const response = await $fetch(
-      `${config.public.apiBase}${config.public.apiPersonPrefix}/projects`,
+      `${config.public.apiBase}${config.public.apiPersonPrefix}/auth/me`,
       {
-        query,
         headers: {
           Accept: 'application/json',
+          Authorization: headers.authorization || '',
         },
       }
     );
@@ -16,8 +16,8 @@ export default defineEventHandler(async (event) => {
     return response;
   } catch (error: any) {
     throw createError({
-      statusCode: error.response?.status || 500,
-      message: error.message || 'Failed to fetch projects',
+      statusCode: error.response?.status || 401,
+      message: error.message || 'Unauthorized',
     });
   }
 });

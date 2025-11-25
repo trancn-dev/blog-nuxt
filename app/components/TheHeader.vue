@@ -26,7 +26,7 @@
               >EDITORS' CHOICE</NuxtLink
             >
             <NuxtLink to="/trending" class="nav-link">TRENDING</NuxtLink>
-            <NuxtLink to="/videos" class="nav-link">VIDEOS</NuxtLink>
+            <NuxtLink to="/about" class="nav-link">ABOUT</NuxtLink>
           </nav>
 
           <!-- Right Actions -->
@@ -79,7 +79,7 @@
               >
                 <path d="M12 5v14M5 12h14"></path>
               </svg>
-              Viết bài
+              <span class="btn-write-text">Viết bài</span>
             </NuxtLink>
 
             <!-- User Menu or Login -->
@@ -102,10 +102,101 @@
               <NuxtLink to="/login" class="btn-login">Đăng nhập</NuxtLink>
               <NuxtLink to="/register" class="btn-register">Đăng ký</NuxtLink>
             </div>
+
+            <!-- Hamburger Menu Button -->
+            <v-app-bar-nav-icon
+              class="hamburger-btn"
+              @click="drawer = !drawer"
+              color="white"
+            />
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Vuetify Navigation Drawer (Top) -->
+    <v-navigation-drawer v-model="drawer" location="left" temporary>
+      <v-list density="compact" nav>
+        <v-list-item
+          prepend-icon="mdi-account-group"
+          title="Nhà sáng tạo nội dung"
+          to="/creator"
+          @click="drawer = false"
+        />
+        <v-list-item
+          prepend-icon="mdi-file-document-outline"
+          title="Mới nhất"
+          to="/posts"
+          @click="drawer = false"
+        />
+        <v-list-item
+          prepend-icon="mdi-book-open-page-variant"
+          title="Series"
+          to="/series"
+          @click="drawer = false"
+        />
+        <v-list-item
+          prepend-icon="mdi-star"
+          title="Editors' Choice"
+          to="/editors-choice"
+          @click="drawer = false"
+        />
+        <v-list-item
+          prepend-icon="mdi-trending-up"
+          title="Trending"
+          to="/trending"
+          @click="drawer = false"
+        />
+        <v-list-item
+          prepend-icon="mdi-video"
+          title="About"
+          to="/about"
+          @click="drawer = false"
+        />
+      </v-list>
+
+      <v-divider />
+
+      <!-- Auth buttons for mobile -->
+      <div class="pa-4" v-if="!isLoggedIn">
+        <v-btn
+          block
+          variant="outlined"
+          color="primary"
+          class="mb-2"
+          to="/login"
+          @click="drawer = false"
+        >
+          Đăng nhập
+        </v-btn>
+        <v-btn block color="primary" to="/register" @click="drawer = false">
+          Đăng ký
+        </v-btn>
+      </div>
+
+      <!-- User info for mobile -->
+      <div v-else class="pa-4">
+        <v-list-item
+          :prepend-avatar="user.avatar"
+          :title="user.name"
+          :subtitle="user.email"
+          to="/profile"
+          @click="drawer = false"
+        />
+        <v-btn
+          block
+          variant="outlined"
+          color="error"
+          class="mt-2"
+          @click="
+            logout();
+            drawer = false;
+          "
+        >
+          Đăng xuất
+        </v-btn>
+      </div>
+    </v-navigation-drawer>
 
     <!-- Search Overlay -->
     <div class="search-overlay" v-if="showSearch">
@@ -146,6 +237,7 @@
   const showBanner = ref(true);
   const showSearch = ref(false);
   const showUserMenu = ref(false);
+  const drawer = ref(false);
   const searchQuery = ref('');
   const notificationCount = ref(3);
   const searchInput = ref(null);
@@ -170,7 +262,7 @@
     () =>
       currentUser.value || {
         name: 'User',
-        avatar: 'https://via.placeholder.com/40',
+        avatar: '',
       }
   );
 
@@ -190,7 +282,8 @@
   const logout = () => {
     authLogout();
     showUserMenu.value = false;
-    // Không chuyển trang, chỉ xóa thông tin đăng nhập
+    // Chuyển về trang chủ sau khi logout
+    navigateTo('/');
   };
 </script>
 
@@ -491,16 +584,28 @@
     .nav {
       display: none;
     }
-  }
 
-  @media (max-width: 768px) {
-    .btn-write span {
-      display: none;
+    .hamburger-btn {
+      display: flex !important;
     }
 
     .auth-buttons {
-      flex-direction: column;
-      gap: 4px;
+      display: none;
     }
+  }
+
+  @media (max-width: 768px) {
+    .btn-write-text {
+      display: none;
+    }
+
+    .btn-write {
+      padding: 8px;
+    }
+  }
+
+  /* Hamburger Button */
+  .hamburger-btn {
+    display: none;
   }
 </style>

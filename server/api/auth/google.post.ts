@@ -1,14 +1,16 @@
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
   const config = useRuntimeConfig();
+  const body = await readBody(event);
 
   try {
     const response = await $fetch(
-      `${config.public.apiBase}${config.public.apiPersonPrefix}/projects`,
+      `${config.public.apiBase}${config.public.apiPersonPrefix}/google`,
       {
-        query,
+        method: 'POST',
+        body,
         headers: {
           Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
       }
     );
@@ -16,8 +18,8 @@ export default defineEventHandler(async (event) => {
     return response;
   } catch (error: any) {
     throw createError({
-      statusCode: error.response?.status || 500,
-      message: error.message || 'Failed to fetch projects',
+      statusCode: error.response?.status || 401,
+      message: error.message || 'Google authentication failed',
     });
   }
 });

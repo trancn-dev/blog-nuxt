@@ -20,8 +20,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase:
-        process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api/v1',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000',
+      apiPersonPrefix:
+        process.env.NUXT_PUBLIC_API_PERSON_PREFIX || '/api/v1/person',
+      apiAdminPrefix:
+        process.env.NUXT_PUBLIC_API_ADMIN_PREFIX || '/api/v1/admin',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
       siteName: process.env.NUXT_PUBLIC_SITE_NAME || 'My Blog',
       firebase: {

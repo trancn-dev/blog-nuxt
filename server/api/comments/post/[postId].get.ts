@@ -1,13 +1,13 @@
 export default defineEventHandler(async (event) => {
-  const postId = getRouterParam(event, "postId");
+  const postId = getRouterParam(event, 'postId');
   const config = useRuntimeConfig();
 
   try {
     const response = await $fetch(
-      `${config.public.apiBase}/comments/post/${postId}`,
+      `${config.public.apiBase}${config.public.apiPersonPrefix}/comments/post/${postId}`,
       {
         headers: {
-          Accept: "application/json",
+          Accept: 'application/json',
         },
       }
     );
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   } catch (error: any) {
     throw createError({
       statusCode: error.response?.status || 500,
-      message: error.message || "Failed to fetch comments",
+      message: error.message || 'Failed to fetch comments',
     });
   }
 });

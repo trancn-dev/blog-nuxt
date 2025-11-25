@@ -1,14 +1,18 @@
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
   const config = useRuntimeConfig();
+  const headers = getHeaders(event);
+  const body = await readBody(event);
 
   try {
     const response = await $fetch(
-      `${config.public.apiBase}${config.public.apiPersonPrefix}/projects`,
+      `${config.public.apiBase}${config.public.apiPersonPrefix}/auth/update`,
       {
-        query,
+        method: 'PUT',
+        body,
         headers: {
           Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: headers.authorization || '',
         },
       }
     );
@@ -17,7 +21,7 @@ export default defineEventHandler(async (event) => {
   } catch (error: any) {
     throw createError({
       statusCode: error.response?.status || 500,
-      message: error.message || 'Failed to fetch projects',
+      message: error.message || 'Failed to update profile',
     });
   }
 });

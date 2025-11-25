@@ -29,12 +29,23 @@ export const useAuth = () => {
 
   // Lưu thông tin đăng nhập
   const setAuth = (userData: User, authToken: string) => {
+    console.log('setAuth called with:', { userData, authToken });
+
+    if (!userData || !authToken) {
+      console.error('setAuth: userData hoặc authToken bị undefined');
+      return;
+    }
+
     user.value = userData;
     auth_token.value = authToken;
 
     if (process.client) {
       localStorage.setItem('auth_token', authToken);
       localStorage.setItem('auth_user', JSON.stringify(userData));
+      console.log('Đã lưu vào localStorage:', {
+        token: localStorage.getItem('auth_token'),
+        user: localStorage.getItem('auth_user'),
+      });
     }
   };
 

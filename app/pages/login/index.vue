@@ -114,16 +114,13 @@
 
   async function handleLogin() {
     try {
-      const response: any = await $fetch(
-        `${config.public.apiBase}/auth/login`,
-        {
-          method: 'POST',
-          body: {
-            email: email.value,
-            password: password.value,
-          },
-        }
-      );
+      const response: any = await $fetch('/api/auth/login', {
+        method: 'POST',
+        body: {
+          email: email.value,
+          password: password.value,
+        },
+      });
 
       console.log('Đăng nhập thành công:', response);
 
@@ -140,6 +137,7 @@
 
   // Đăng nhập bằng Google
   async function handleGoogleLogin() {
+    debugger;
     googleLoading.value = true;
     try {
       const { signInWithGoogle } = useFirebaseAuth();
@@ -149,18 +147,15 @@
       const idToken = await user.getIdToken();
 
       // Gửi token lên backend để xác thực
-      const response: any = await $fetch(
-        `${config.public.apiBase}/auth/google`,
-        {
-          method: 'POST',
-          body: {
-            idToken,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          },
-        }
-      );
+      const response: any = await $fetch('/api/auth/google', {
+        method: 'POST',
+        body: {
+          idToken,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        },
+      });
 
       console.log('Đăng nhập Google thành công:', response);
 

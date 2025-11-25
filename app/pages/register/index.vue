@@ -11,12 +11,24 @@
           <v-card-text>
             <v-form @submit.prevent="handleRegister">
               <v-text-field
-                v-model="username"
-                label="Tên Đăng Nhập"
+                v-model="name"
+                label="Họ và Tên"
                 variant="outlined"
                 prepend-inner-icon="mdi-account"
                 :rules="[rules.required]"
                 required
+              />
+
+              <v-text-field
+                v-model="userName"
+                label="Tên đăng nhập (username)"
+                variant="outlined"
+                prepend-inner-icon="mdi-at"
+                :rules="[rules.required, rules.userName]"
+                hint="Ví dụ: abc123 (không dấu, không khoảng trắng)"
+                persistent-hint
+                required
+                class="mt-3"
               />
 
               <v-text-field
@@ -106,7 +118,8 @@
 
   import { ref } from 'vue';
 
-  const username = ref('');
+  const name = ref('');
+  const userName = ref('');
   const email = ref('');
   const password = ref('');
   const googleLoading = ref(false);
@@ -119,17 +132,21 @@
     email: (value: string) => /.+@.+\..+/.test(value) || 'Email không hợp lệ',
     minLength: (value: string) =>
       value.length >= 6 || 'Mật khẩu phải có ít nhất 6 ký tự',
+    userName: (value: string) =>
+      /^[a-zA-Z0-9_]+$/.test(value) ||
+      'Username chỉ được chứa chữ cái, số và dấu gạch dưới',
   };
 
   // Đăng ký thông thường
   async function handleRegister() {
     try {
       const response: any = await $fetch(
-        `${config.public.apiBase}/auth/register`,
+        `${config.public.apiBase}${config.public.apiPersonPrefix}/register`,
         {
           method: 'POST',
           body: {
-            username: username.value,
+            name: name.value,
+            user_name: userName.value,
             email: email.value,
             password: password.value,
           },
@@ -160,18 +177,15 @@
       const idToken = await user.getIdToken();
 
       // Gửi token lên backend để tạo tài khoản
-      const response: any = await $fetch(
-        `${config.public.apiBase}/auth/google`,
-        {
-          method: 'POST',
-          body: {
-            idToken,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          },
-        }
-      );
+      const response: any = await $fetch(`/api/auth/google`, {
+        method: 'POST',
+        body: {
+          idToken,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+        },
+      });
 
       console.log('Đăng ký Google thành công:', response);
 
